@@ -1,5 +1,6 @@
 import random as rd
 
+
 """ Data classes"""
 
 class Data_Tier1:
@@ -17,6 +18,8 @@ class Data_Tier3:
     n = 70
     liens_t2 = 2
     temps = (20, 50)
+
+
 
 """Create graph"""
 
@@ -44,7 +47,7 @@ class Graphe_list:
             for j in range(dt.n):
                 if rd.random() <= dt.pourcentage:
                     temps.append(rd.randint(dt.temps[0], dt.temps[1]))
-                    parents.append(rd.randint(0, dt.n))
+                    parents.append(rd.randint(0, dt.n-1))
             tier.append(Sommet(temps, parents))
         return tier
 
@@ -57,7 +60,7 @@ class Graphe_list:
                 parents.append(rd.randint(0, tier1_n))
                 temps.append(rd.randint(dt.temps[0], dt.temps[1]))
             for j in range(rd.randint(dt.liens_t2[0], dt.liens_t2[1])):
-                parents.append(rd.randint(tier1_n, dt.n + tier1_n))
+                parents.append(rd.randint(tier1_n-1, dt.n + tier1_n-1))
                 temps.append(rd.randint(dt.temps[0], dt.temps[1]))
             tier.append(Sommet(temps, parents))
         return tier
@@ -69,7 +72,7 @@ class Graphe_list:
             parents = []
             temps = []
             for j in range(dt.liens_t2):
-                parents.append(rd.randint(tier1_n, tier1_n+tier2_n))
+                parents.append(rd.randint(tier1_n-1, tier1_n+tier2_n-1))
                 temps.append(rd.randint(dt.temps[0], dt.temps[1]))
             tier.append(Sommet(temps, parents))
         return tier
