@@ -1,4 +1,5 @@
 import random as rd
+from math import ceil
 
 
 """ Data classes"""
@@ -27,56 +28,68 @@ class Sommet:
     def __init__(self, temps = [], parents = []):
         self.temps = temps
         self.parents = parents #faire enfant? non - car la table de routage est figee
+    def append(self, temps, parent):
+        self.temps.append(temps)
+        self.parents.append(parent)
+
+
 
 class Graphe_list:
     
     def __init__(self):
         dt1 = Data_Tier1()
-        dt2 = Data_Tier2()
-        self.resaux = self.create_tier1(dt1)
-        self.resaux += self.create_tier2(dt2, dt1.n)
-        self.resaux += self.create_tier3(dt1.n, dt2.n)
+        self.reseaux = self.create_tier1(dt1)
+        self.reseaux += self.create_tier2(self.reseaux)
+        self.reseaux += self.create_tier3(dt1.n, self.reseaux)
         print(len(self.resaux))
     
     
     def create_tier1(self, dt):
-        tier = []
+
+        tier = [Sommet() for i in range(dt.n)]
         for i in range(dt.n):
-            temps = []
-            parents = []
-            for j in range(dt.n):
+            for j in range(i, dt.n):
                 if rd.random() <= dt.pourcentage:
-                    temps.append(rd.randint(dt.temps[0], dt.temps[1]))
-                    parents.append(rd.randint(0, dt.n-1))
-            tier.append(Sommet(temps, parents))
+                    temps = rd.randint(dt.temps[0], dt.temps[1])
+                    parent = rd.randint(0, dt.n-1)
+                    self.update_tier(tier, i, parent, temps)
         return tier
 
-    def create_tier2(self, dt, tier1_n):
-        tier = []
+    def create_tier2(self, dt, tier):
+        dt = Data_Tier2()
+        tier1_n = len(tier)
+        new_tier = [Sommet() for i in range(dt.n)]
+        tier += new_tier
+
         for i in range(dt.n):
-            parents = []
-            temps = []
+
             for j in range(rd.randint(dt.liens_t1[0], dt.liens_t1[1])):
-                parents.append(rd.randint(0, tier1_n))
-                temps.append(rd.randint(dt.temps[0], dt.temps[1]))
-            for j in range(rd.randint(dt.liens_t2[0], dt.liens_t2[1])):
-                parents.append(rd.randint(tier1_n-1, dt.n + tier1_n-1))
-                temps.append(rd.randint(dt.temps[0], dt.temps[1]))
-            tier.append(Sommet(temps, parents))
+                parent = (rd.randint(0, tier1_n))
+                temps = (rd.randint(dt.temps[0], dt.temps[1]))
+                self.update_tier(tier, i, parent, temps)
+
+            for j in range(i, rd.randint(dt.liens_t2[0], dt.liens_t2[1])):
+                parent = rd.randint(tier1_n-1, dt.n + tier1_n-1)
+                temps = rd.randint(dt.temps[0], dt.temps[1])
+                self.update_tier(tier, i, parent, temps)
         return tier
 
-    def create_tier3(self, tier1_n, tier2_n):
+    def create_tier3(self, tier1_n, tier):
         dt = Data_Tier3()
-        tier = []
+        tier2_n = len(tier) - tier1_n
+        new_tier = [Sommet() for i in range(dt.n)]
+        tier += new_tier
+
         for i in range(dt.n):
-            parents = []
-            temps = []
             for j in range(dt.liens_t2):
-                parents.append(rd.randint(tier1_n-1, tier1_n+tier2_n-1))
-                temps.append(rd.randint(dt.temps[0], dt.temps[1]))
-            tier.append(Sommet(temps, parents))
+                parent = rd.randint(tier1_n-1, tier1_n+tier2_n-1)
+                temps = rd.randint(dt.temps[0], dt.temps[1])
+                self.update_tier(tier, i, parent, temps)
         return tier
-        
+    
+    def update_tier(tier, i, parent, temps):
+        tier[i].append(temps, parent)
+        tier[parent].append(temps, i)
 
 '''
 class Graphe_matrice:
