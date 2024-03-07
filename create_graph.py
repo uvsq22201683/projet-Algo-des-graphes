@@ -28,6 +28,7 @@ class Sommet:
     def __init__(self, temps = [], parents = []):
         self.temps = temps
         self.parents = parents #faire enfant? non - car la table de routage est figee
+    
     def append(self, temps, parent):
         self.temps.append(temps)
         self.parents.append(parent)
@@ -39,9 +40,9 @@ class Graphe_list:
     def __init__(self):
         dt1 = Data_Tier1()
         self.reseaux = self.create_tier1(dt1)
-        self.reseaux += self.create_tier2(self.reseaux)
-        self.reseaux += self.create_tier3(dt1.n, self.reseaux)
-        print(len(self.resaux))
+        self.reseaux = self.create_tier2(self.reseaux)
+        self.reseaux = self.create_tier3(dt1.n, self.reseaux)
+        print(len(self.reseaux))
     
     
     def create_tier1(self, dt):
@@ -55,7 +56,7 @@ class Graphe_list:
                     self.update_tier(tier, i, parent, temps)
         return tier
 
-    def create_tier2(self, dt, tier):
+    def create_tier2(self, tier):
         dt = Data_Tier2()
         tier1_n = len(tier)
         new_tier = [Sommet() for i in range(dt.n)]
@@ -87,7 +88,7 @@ class Graphe_list:
                 self.update_tier(tier, i, parent, temps)
         return tier
     
-    def update_tier(tier, i, parent, temps):
+    def update_tier(self, tier, i, parent, temps):
         tier[i].append(temps, parent)
         tier[parent].append(temps, i)
 
@@ -111,3 +112,4 @@ class Graphe_matrice:
     
 '''
 
+Graphe_list()
