@@ -92,6 +92,28 @@ class Graphe_list:
         tier[i].append(temps, parent)
         tier[parent].append(temps, i)
 
+def dfs(tier, start):
+    visited = [False] *len(tier)
+    stack = [start]
+    while stack :
+        vertex = stack.pop()
+        if not visited[vertex]:
+            visited[vertex] = True
+            for i, neighbor in zip(tier[vertex].temps, tier[vertex].parents)
+            if not visited[neighbor]:
+                stack.append(neighbor)
+    return visited
+
+def is_connexe(tier):
+    visited = dfs(tier, 0)
+    return all(visited)
+dt1 = Data_Tier1()
+tier1 = self.create_tier1(dt1)
+if is_connexe(tier1):
+    print("Le tier 1 est connexe.")
+else:
+    print("Le tier 1 n'est pas connexe.")
+    
 '''
 class Graphe_matrice:
     def __init__(self, n, pourcentage):
