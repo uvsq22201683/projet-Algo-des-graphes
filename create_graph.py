@@ -69,6 +69,8 @@ class Graphe_list:
     def update_tier(self, tier, i, parent, temps):
         tier[i].append_edge(temps, parent)
         #tier[parent].append_edge(temps, i)
+"""
+###Avant le push verifiez svp le fonctionnement du code :)
 
 def dfs(tier, start):
     visited = [False] *len(tier)
@@ -82,16 +84,17 @@ def dfs(tier, start):
                 stack.append(neighbor)
     return visited
 
-def is_connexe(tier):
+def is_connexe(self, tier):
     visited = dfs(tier, 0)
     return all(visited)
-dt1 = Data_Tier1()
-tier1 = self.create_tier1(dt1)
-if is_connexe(tier1):
-    print("Le tier 1 est connexe.")
-else:
-    print("Le tier 1 n'est pas connexe.")
-    
+    dt1 = Data_Tier1()
+    tier1 = self.create_tier1(dt1)
+    if is_connexe(tier1):
+        print("Le tier 1 est connexe.")
+    else:
+        print("Le tier 1 n'est pas connexe.")
+
+"""    
 '''
 class Graphe_matrice:
     def __init__(self, n, pourcentage):
