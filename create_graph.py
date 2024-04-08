@@ -43,14 +43,10 @@ class Graphe_list:
         for i in range(data_tier2.n):
 
             for _ in range(rd.randint(data_tier2.liens_t1[0], data_tier2.liens_t1[1])):
-                parent = (rd.randint(0, data_tier1.n-1)) #if parent not in parents
-                temps = (rd.randint(data_tier2.temps[0], data_tier2.temps[1]))
-                self.update_tier(tier, i+tier_len, parent, temps)
+                self.choose_parent(0, data_tier1.n-1, i, data_tier2, tier, tier_len)
 
             for _ in range(rd.randint(data_tier2.liens_t2[0], data_tier2.liens_t2[1])):
-                parent = rd.randint(0, data_tier2.n-1) + (data_tier1.n) #if parent == i recalculer
-                temps = rd.randint(data_tier2.temps[0], data_tier2.temps[1])
-                self.update_tier(tier, i+tier_len, parent, temps)
+                self.choose_parent(data_tier1.n, data_tier2.n+data_tier1.n-1, i, data_tier2, tier, tier_len)
         return tier
 
     def create_tier3(self, tier): #ne marche pas
@@ -59,13 +55,17 @@ class Graphe_list:
         tier += new_tier
 
         for i in range(data_tier3.n):
-            for j in range(data_tier3.liens_t2):
-                parent = rd.randint(0, data_tier2.n-1) + (data_tier1.n)
-                temps = rd.randint(data_tier3.temps[0], data_tier3.temps[1])
-                self.update_tier(tier, i+tier_len, parent, temps)
+            for _ in range(data_tier3.liens_t2):
+                self.choose_parent(data_tier1.n, data_tier2.n+data_tier1.n-1, i, data_tier2, tier, tier_len)
         return tier
     
-    
+    def choose_parent(self, d, f, i, data_tier, tier, tier_len):
+        parent = (rd.randint(d, f)) 
+        temps = (rd.randint(data_tier.temps[0], data_tier.temps[1]))
+        while (parent in tier[i].parents) or (parent == i):
+            parent = (rd.randint(d, f))
+        self.update_tier(tier, i+tier_len, parent, temps)
+
     def update_tier(self, tier, i, parent, temps):
         tier[i].append_edge(temps, parent)
         #tier[parent].append_edge(temps, i)
