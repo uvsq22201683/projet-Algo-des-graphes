@@ -36,4 +36,3 @@ img = tk.Label(racine, image=image_tk, bg=couleur)
 img.place(relx=0.5, rely= 0.65, anchor='s')
 
 racine.mainloop()
-# Image.ANTIALIAS
