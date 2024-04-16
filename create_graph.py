@@ -1,6 +1,7 @@
 import random as rd
 from math import ceil
 from data import *
+import numpy as np
 
 
 """Create graph"""
@@ -68,7 +69,7 @@ class Graphe_list:
 
     def update_tier(self, tier, i, parent, temps):
         tier[i].append_edge(temps, parent)
-        tier[parent].append_edge(temps, i) 
+        tier[parent].append_edge(temps, i) #doublons !!!
     '''
     def is_connexe(self):
         visited = self.dfs(0)
@@ -87,27 +88,59 @@ class Graphe_list:
         return visited
     '''
 
-class Graphe_matrice:
-    def __init__(self, n, pourcentage):
-        self.tier = self.create_tier(n, pourcentage)
 
-    def create_tier(self, n, pourcentage):
-        
-        tier = []
-        for i in range(n):
-            tier1 = []
-            for j in range(n):
-                if j != i and rd.random() <= pourcentage: #>= ?
-                    tier1.append(rd.randint(5,10))
-                else:
-                    tier1.append(0)
-            tier.append(tier1)
-        return tier
 
+def matrice_graphe(reseau_graphe):
+    matrice_graphe = np.zeros (((len(reseau_graphe)), (len(reseau_graphe))))
+    i = 0
+    while i < (len(reseau_graphe)): #on remonte les générations, ligne par ligne, parents
+        j = 0
+        parents = list(set(reseau_graphe[i].parents)) #parents (sans doublons) du sommet en étude
+        '''probleeme avec doublons, decalage des valeurs!!!!'''
+        temps = reseau_graphe[i].temps
+        print(parents, temps, "-")
+
+        if parents: 
+            for j in range (len(parents)): #on parcourt les parents de chaque sommet
+                print("hola", parents[j], i)
+                matrice_graphe[parents[j]][i] = temps[j] #[ligne][colonne] = [parent][fils]
+                j +=1
+        i += 1
+    print(matrice_graphe)
+    return matrice_graphe
+
+def algo_de_Floyd_Warshall(matrice):
+    mat = matrice
+    S = [[-1] * p for p in range(len(matrice))] #matrice des succeseurs
+    for k in range (len(matrice)): #k représente un sommet intérmediaire, l'algo vérifie si le chemin entre i et j peut s'améliorer en passant par k
+        #P[k][k] = k #k ou 0??
+        for i in range (len(matrice)):
+            for j in range (len(matrice)):
+                if (mat[i][k] + mat[k][j]) < mat[i][j]:
+                    mat[i][j] = mat[i][k] + mat[k][j]
+                    S[i][j] = k
+    return mat, S  #S[i][j] c'est le successuer de i dans le plus court chemin de i à j 
+
+def chemin_le_plus_court(i, j, tab_succ): 
+    chemin = [i] 
+    prochain = tab_succ[i][j]
+    while prochain != -1: #-1 veut dire qu'il n'y a pas de succ dans le chemin le plus court établi
+        chemin.append(prochain)
+        prochain = tab_succ[prochain][j]
+    chemin.append(j)
+    print('Le chemin le plus court depuis', i, "jusqu'à", j, 'est', chemin)
+    return chemin
 
 
 if __name__ == '__main__':
     graph = Graphe_list()
     reseau = graph.reseaux
-    print(reseau[12].parents)
-    print(graph.is_connexe())
+
+    ''' NE PAS EFFACER STP
+    _, tab_successeurs = algo_de_Floyd_Warshall(matrice_graphe(reseau))
+    debut = 1 #varient
+    arrivée = 6
+    chemin_le_plus_court(debut, arrivée,tab_successeurs)
+    '''
+
+    #print(graph.is_connexe())
