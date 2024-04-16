@@ -81,8 +81,10 @@ def main():
 
     root = tk.Tk()
     root.title('Algo des graphes')
-    root.config(bg = "#C0BCB5")
-    root.geometry("800x600") 
+    root.config(bg = "beige")
+    largeur_ecran = root.winfo_screenwidth()
+    hauteur_ecran = root.winfo_screenheight()
+    root.geometry(f"{largeur_ecran}x{hauteur_ecran}") 
     #root.resizable(width = False, height = False) 
 
     root.update_idletasks() 
