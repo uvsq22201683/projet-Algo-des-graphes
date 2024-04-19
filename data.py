@@ -1,13 +1,13 @@
 """ Data classes"""
 
 class Data_Tier1:
-    n = 2 #10
+    n = 10 #2 #10
     pourcentage = 0.75
     temps = (5, 10)
     color = "red"
 
 class Data_Tier2:
-    n = 4 #20
+    n = 20 #4 #20
     liens_t1 = (1, 2)
     liens_t2 = (2, 3)
     temps = (10, 20)

@@ -34,6 +34,7 @@ class Graphe_list:
                     temps = rd.randint(data_tier1.temps[0], data_tier1.temps[1])
                     #parent = j
                     self.update_tier(tier, i, j, temps)
+                    #print(i, tier[i].parents, j)
         return tier
 
     def create_tier2(self, tier):
@@ -42,12 +43,13 @@ class Graphe_list:
         tier += new_tier
 
         for i in range(data_tier2.n):
+            #print(i)
 
             for _ in range(rd.randint(data_tier2.liens_t1[0], data_tier2.liens_t1[1])):
-                self.choose_parent(0, data_tier1.n-1, i, data_tier2, tier, tier_len)
+                self.choose_parent(0, data_tier1.n-1, i+tier_len, data_tier2, tier)
 
             for _ in range(rd.randint(data_tier2.liens_t2[0], data_tier2.liens_t2[1])):
-                self.choose_parent(data_tier1.n, data_tier2.n+data_tier1.n-1, i, data_tier2, tier, tier_len)
+                self.choose_parent(data_tier1.n, data_tier2.n+data_tier1.n-1, i+tier_len, data_tier2, tier)
         return tier
 
     def create_tier3(self, tier): #ne marche pas
@@ -57,15 +59,16 @@ class Graphe_list:
 
         for i in range(data_tier3.n):
             for _ in range(data_tier3.liens_t2):
-                self.choose_parent(data_tier1.n, data_tier2.n+data_tier1.n-1, i, data_tier2, tier, tier_len)
+                self.choose_parent(data_tier1.n, data_tier2.n+data_tier1.n-1, i+tier_len, data_tier2, tier)
         return tier
     
-    def choose_parent(self, d, f, i, data_tier, tier, tier_len):
+    def choose_parent(self, d, f, i, data_tier, tier):
         parent = (rd.randint(d, f)) 
         temps = (rd.randint(data_tier.temps[0], data_tier.temps[1]))
         while (parent in tier[i].parents) or (parent == i):
             parent = (rd.randint(d, f))
-        self.update_tier(tier, i+tier_len, parent, temps)
+        #print(i, tier[i].parents, parent)
+        self.update_tier(tier, i, parent, temps)
 
     def update_tier(self, tier, i, parent, temps):
         tier[i].append_edge(temps, parent)
@@ -135,6 +138,7 @@ def chemin_le_plus_court(i, j, tab_succ):
 if __name__ == '__main__':
     graph = Graphe_list()
     reseau = graph.reseaux
+    #print(reseau)
 
     ''' NE PAS EFFACER STP
     _, tab_successeurs = algo_de_Floyd_Warshall(matrice_graphe(reseau))
@@ -144,3 +148,11 @@ if __name__ == '__main__':
     '''
 
     #print(graph.is_connexe())
+
+    """
+    c = 0
+    for i in reseau:
+        print(c, i.parents)
+        print(c, i.temps)
+        c += 1
+        """
