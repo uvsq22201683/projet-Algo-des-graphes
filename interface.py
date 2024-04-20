@@ -70,6 +70,10 @@ def do_zoom(event):
     #    tiers[i].place_configure(x = new_coords[i][0], y = new_coords[i][1])
     #resize_tiers(factor)
 
+def nextpage():
+    root.destroy()
+    import presentation
+
 
 def main():
     global canva
@@ -78,21 +82,35 @@ def main():
     global tiers
     global circle_size
 
-
     root = tk.Tk()
     root.title('Algo des graphes')
-    root.config(bg = "#C0BCB5")
-    root.geometry("800x600") 
-    #root.resizable(width = False, height = False) 
+    largeur_ecran = root.winfo_screenwidth()
+    hauteur_ecran = root.winfo_screenheight()
+    root.geometry(f"{largeur_ecran}x{hauteur_ecran}")
+    root.configure(bg="beige")
+    #root.resizable(width = False, height = False)
 
+    couleur = "beige" 
+
+    
     root.update_idletasks() 
-    canva = tk.Canvas(root, width=root.winfo_width(), height = root.winfo_height(), bg="ivory")
-    canva.place(x = 0, y = 0)
+    canva = tk.Canvas(root, width=root.winfo_width(), height = 600, bg=couleur)
+    canva.place(relx = 0, rely = 0.2)
 
     tiers = []
     tiers_coords = tiers_representations(root)
     add_liens(canva)
     place_tier()
+
+    l1= tk.Label(root, text="Première étape de l'aventure :",font=("Courier New", 30),  justify='center', background=couleur)
+    l1.pack()
+    l2= tk.Label(root, text="Topologie d'interconnexion de 100 noeuds",font=("Courier New", 30),  justify='center', background=couleur)
+    l2.pack()
+    l3= tk.Label(root, text="(Magnifique n'est-ce pas ? :) on peut même le déplacer et le zoomer !)",font=("Courier New", 15),  justify='center', background=couleur)
+    l3.pack()
+
+    bouton_page_suivante = tk.Button(canva, text="Pret pour la prochaine étape ?",command=nextpage, background=couleur, font=("Courier New", 10))
+    bouton_page_suivante.place(relx=0.85, rely=0.85, anchor='s')
     
     #root.bind("<Configure>", place_tier)
     canva.bind("<MouseWheel>", do_zoom)
