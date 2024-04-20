@@ -70,9 +70,9 @@ def do_zoom(event):
     #    tiers[i].place_configure(x = new_coords[i][0], y = new_coords[i][1])
     #resize_tiers(factor)
 
-def btncestparti():
+def nextpage():
     root.destroy()
-    import interface
+    import presentation
 
 
 def main():
@@ -108,6 +108,9 @@ def main():
     l2.pack()
     l3= tk.Label(root, text="(Magnifique n'est-ce pas ? :) on peut même le déplacer et le zoomer !)",font=("Courier New", 15),  justify='center', background=couleur)
     l3.pack()
+
+    bouton_page_suivante = tk.Button(canva, text="Pret pour la prochaine étape ?",command=nextpage, background=couleur, font=("Courier New", 10))
+    bouton_page_suivante.place(relx=0.85, rely=0.85, anchor='s')
     
     #root.bind("<Configure>", place_tier)
     canva.bind("<MouseWheel>", do_zoom)
