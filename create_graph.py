@@ -100,34 +100,35 @@ def matrice_graphe(reseau_graphe):
     for i in range(taille): 
         parents = reseau_graphe[i].parents
         temps = reseau_graphe[i].temps
-
         if parents: 
             for j in range(len(parents)): #on parcourt les parents de chaque sommet
                 matrice_graphe[parents[j]][i] = temps[j] #[ligne][colonne] = [parent][fils]
-
     return matrice_graphe
 
 
 def algo_de_Floyd_Warshall(matrice):
     taille = len(matrice)
-    S = [[-1] * taille for _ in range(taille)] #matrice des succeseurs
+    P = [[-1] * taille for _ in range(taille)] #matrice des prédecesseurs
     for k in range (taille): #k représente un sommet intérmediaire
-        #P[k][k] = k #k ou 0??
         for i in range (taille):
             for j in range (taille):
                 if (matrice[i][k] + matrice[k][j]) < matrice[i][j]:
                     matrice[i][j] = matrice[i][k] + matrice[k][j]
-                    S[i][j] = k
-    return matrice, S  #S[i][j] c'est le successuer de i dans le plus court chemin de i à j 
+                    if i != j:
+                        P[i][j] = k
+    return matrice, P  #P[i][j] c'est le predecesseur de j dans le plus court chemin de i à j 
 
 
 def chemin_le_plus_court(i, j, tab_succ): 
-    chemin = [i] 
-    prochain = tab_succ[i][j]
-    while prochain != -1 and prochain != j: #-1 veut dire qu'il n'y a pas de succ dans le chemin le plus court établi
-        chemin.append(prochain)
-        prochain = tab_succ[prochain][j]
+    chemin = [] 
+    predecesseur = tab_succ[i][j]
+    while predecesseur != -1 and predecesseur != i: #-1 veut dire qu'il n'y a pas de pred dans le chemin le plus court établi
+        chemin.append(predecesseur)
+        predecesseur = tab_succ[i][predecesseur]
+    chemin.reverse()
+    chemin.insert(0, i)
     chemin.append(j)
+
     print('Le chemin le plus court de', i, 'à', j, 'est', chemin)
     return chemin
     
@@ -136,10 +137,10 @@ if __name__ == '__main__':
     reseau = graph.reseaux
     #print(reseau)
 
-    ''' NE PAS EFFACER STP'''
+    ''' CREATION TABLE DE ROUTAGE '''
     _, tab_successeurs = algo_de_Floyd_Warshall(matrice_graphe(reseau))
     debut = 0 #varient
-    arrivée = 69
+    arrivée = 99
     chemin_le_plus_court(debut, arrivée, tab_successeurs)
     
 
