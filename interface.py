@@ -75,6 +75,8 @@ def nextpage():
     import presentation
 
 
+
+
 def main():
     global canva
     global root
@@ -108,9 +110,18 @@ def main():
     l2.pack()
     l3= tk.Label(root, text="(Magnifique n'est-ce pas ? :) on peut même le déplacer et le zoomer !)",font=("Courier New", 15),  justify='center', background=couleur)
     l3.pack()
+    marginbottom = tk.Canvas(root, width=largeur_ecran, height = 40, bg=couleur)
+    marginbottom.place(relx = 0, rely=0.9)
+    marginright = tk.Canvas(root, width=40, height=hauteur_ecran, bg=couleur)
+    marginright.place(relx = 0.96, rely=0)
+    marginleft = tk.Canvas(root, width=40, height=hauteur_ecran, bg=couleur)
+    marginleft.place(relx = 0.001, rely=0)
 
     bouton_page_suivante = tk.Button(canva, text="Pret pour la prochaine étape ?",command=nextpage, background=couleur, font=("Courier New", 10))
     bouton_page_suivante.place(relx=0.85, rely=0.85, anchor='s')
+
+    bouton_recentrer = tk.Button(canva, text="recentrer le graphe ", bg = couleur, font=("Courier New", 10))
+    bouton_recentrer.place(relx=0.85, rely=0.1, anchor='n')
     
     #root.bind("<Configure>", place_tier)
     canva.bind("<MouseWheel>", do_zoom)
