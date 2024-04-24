@@ -74,7 +74,7 @@ class Graphe_list:
     def update_tier(self, tier, i, parent, temps):
         tier[i].append_edge(temps, parent)
         tier[parent].append_edge(temps, i) #doublons !!!
-    '''
+    
     def is_connexe(self):
         visited = self.dfs(0)
         return all(visited)
@@ -90,7 +90,7 @@ class Graphe_list:
                     if not visited[neighbor]:
                         stack.append(neighbor)
         return visited
-    '''
+
 
 
 def matrice_graphe(reseau_graphe):
@@ -143,8 +143,10 @@ if __name__ == '__main__':
     arrivée = 99
     chemin_le_plus_court(debut, arrivée, tab_successeurs)
     
-
-    #print(graph.is_connexe())
+    if graph.is_connexe() == True :
+        print(graph.is_connexe(), 'le graphe est connexe')
+    else : 
+        print(graph.is_connexe(), "le graphe n'est pas connexe")
 
     '''
     c = 0
