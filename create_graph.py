@@ -118,12 +118,12 @@ def algo_de_Floyd_Warshall(matrice):
     return matrice, P  #P[i][j] c'est le predecesseur de j dans le plus court chemin de i à j 
 
 
-def chemin_le_plus_court(i, j, tab_succ): 
+def chemin_le_plus_court(i, j, tab_pred): 
     chemin = [] 
-    predecesseur = tab_succ[i][j]
+    predecesseur = tab_pred[i][j]
     while predecesseur != -1 and predecesseur != i: #-1 veut dire qu'il n'y a pas de pred dans le chemin le plus court établi
         chemin.append(predecesseur)
-        predecesseur = tab_succ[i][predecesseur]
+        predecesseur = tab_pred[i][predecesseur]
     chemin.reverse()
     chemin.insert(0, i)
     chemin.append(j)
@@ -137,10 +137,10 @@ if __name__ == '__main__':
     #print(reseau)
 
     ''' CREATION TABLE DE ROUTAGE '''
-    _, tab_successeurs = algo_de_Floyd_Warshall(matrice_graphe(reseau))
+    _, tab_predecesseurs = algo_de_Floyd_Warshall(matrice_graphe(reseau))
     debut = 0 #varient
     arrivée = 99
-    chemin_le_plus_court(debut, arrivée, tab_successeurs)
+    chemin_le_plus_court(debut, arrivée, tab_predecesseurs)
     
 
     if graph.is_connexe() == True :
