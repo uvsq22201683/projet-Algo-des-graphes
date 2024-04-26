@@ -22,6 +22,10 @@ class Graphe_list:
     
     def __init__(self):
         self.reseaux = self.create_tier1()
+        connexe = self.is_connexe()
+        while not connexe:
+            self.reseaux = self.create_tier1()
+            connexe = self.is_connexe()
         self.reseaux = self.create_tier2(self.reseaux)
         self.reseaux = self.create_tier3(self.reseaux)
     
@@ -33,9 +37,7 @@ class Graphe_list:
             for j in range(i+1, data_tier1.n):
                 if rd.random() <= data_tier1.pourcentage:
                     temps = rd.randint(data_tier1.temps[0], data_tier1.temps[1])
-                    #parent = j
                     self.update_tier(tier, i, j, temps)
-                    #print(i, tier[i].parents, j)
         return tier
 
     def create_tier2(self, tier):
@@ -44,8 +46,6 @@ class Graphe_list:
         tier += new_tier
 
         for i in range(data_tier2.n):
-            #print(i)
-
             for _ in range(rd.randint(data_tier2.liens_t1[0], data_tier2.liens_t1[1])):
                 self.choose_parent(0, data_tier1.n-1, i+tier_len, data_tier2, tier)
 
@@ -68,7 +68,6 @@ class Graphe_list:
         temps = (rd.randint(data_tier.temps[0], data_tier.temps[1]))
         while (parent in tier[i].parents) or (parent == i):
             parent = (rd.randint(d, f))
-        #print(i, tier[i].parents, parent)
         self.update_tier(tier, i, parent, temps)
 
     def update_tier(self, tier, i, parent, temps):
@@ -143,6 +142,7 @@ if __name__ == '__main__':
     arrivée = 99
     chemin_le_plus_court(debut, arrivée, tab_successeurs)
     
+
     if graph.is_connexe() == True :
         print(graph.is_connexe(), 'le graphe est connexe')
     else : 
