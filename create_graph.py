@@ -155,3 +155,4 @@ if __name__ == '__main__':
         print(c, i.temps)
         c += 1
        ''' 
+    

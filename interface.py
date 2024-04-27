@@ -1,7 +1,12 @@
 import tkinter as tk
 from tiers_representation_geom import tiers_representations
 from data import *
-from create_graph import Graphe_list
+from create_graph import Graphe_list 
+from create_graph import algo_de_Floyd_Warshall
+from create_graph import chemin_le_plus_court
+from create_graph import matrice_graphe
+
+
 
 
 def tier(color, nb, coords):
@@ -70,9 +75,10 @@ def do_zoom(event):
     #    tiers[i].place_configure(x = new_coords[i][0], y = new_coords[i][1])
     #resize_tiers(factor)
 
-def nextpage():
-    root.destroy()
-    import routage
+graph = Graphe_list()
+reseau = graph.reseaux
+_, tab_predecesseurs = algo_de_Floyd_Warshall(matrice_graphe(reseau))
+
 
 def main():
     global canva
@@ -80,6 +86,7 @@ def main():
     global tiers_coords
     global tiers
     global circle_size
+
 
     root = tk.Tk()
     root.title('Algo des graphes')
@@ -91,7 +98,6 @@ def main():
 
     couleur = "beige" 
 
-    
     root.update_idletasks() 
     canva = tk.Canvas(root, width=root.winfo_width(), height = 600, bg=couleur)
     canva.place(relx = 0, rely = 0.2)
@@ -101,24 +107,58 @@ def main():
     add_liens(canva)
     place_tier()
 
-    l1= tk.Label(root, text="Première étape de l'aventure :",font=("Courier New", 30),  justify='center', background=couleur)
+    l1= tk.Label(root, text="Voici notre grand secret :",font=("Courier New", 25),  justify='center', background=couleur)
     l1.pack()
-    l2= tk.Label(root, text="Topologie d'interconnexion de 100 noeuds",font=("Courier New", 30),  justify='center', background=couleur)
+    l2= tk.Label(root, text="Topologie d'interconnexion de 100 noeuds",font=("Courier New", 25),  justify='center', background=couleur)
     l2.pack()
-    l3= tk.Label(root, text="(Magnifique n'est-ce pas ? :) on peut même le déplacer et le zoomer !)",font=("Courier New", 15),  justify='center', background=couleur)
+    l3= tk.Label(root, text="(Magnifique n'est-ce pas ? :) on peut même le déplacer et le zoomer !)",font=("Courier New", 10),  justify='center', background=couleur)
     l3.pack()
-    marginbottom = tk.Canvas(root, width=largeur_ecran, height = 40, bg=couleur)
-    marginbottom.place(relx = 0, rely=0.9)
+    l4= tk.Label(root, text= "Tu peux retrouver le chemin le plus court entre deux noeuds !",font=("Courier New", 22),  justify='center', background=couleur)
+    l4.pack()
+    l5= tk.Label(root, text= "Allez essaye ;)",font=("Courier New", 11),  justify='center', background=couleur)
+    l5.place(relx= 0.08, rely=0.25)
+    lknot1 = tk.Label(root, text= "Noeud de départ :",font=("Courier New", 10),  justify='center', background=couleur)
+    lknot1.place(relx=0.04, rely=0.3)
+    val1 = tk.Entry(root)
+    val1.place(relx=0.15, rely=0.3)
+    lknot2 = tk.Label(root, text= "Noeud de d'arrivée :",font=("Courier New", 10),  justify='center', background=couleur)
+    lknot2.place(relx=0.04, rely=0.37)
+    val2 = tk.Entry(root)
+    val2.place(relx=0.17, rely=0.37)
+    marginbottom = tk.Canvas(root, width=largeur_ecran, height = 45, bg=couleur)
+    marginbottom.place(relx = 0, rely=0.94)
     marginright = tk.Canvas(root, width=40, height=hauteur_ecran, bg=couleur)
     marginright.place(relx = 0.96, rely=0)
     marginleft = tk.Canvas(root, width=40, height=hauteur_ecran, bg=couleur)
     marginleft.place(relx = 0.001, rely=0)
 
-    bouton_page_suivante = tk.Button(canva, text="Pret pour la prochaine étape ?",command=nextpage, background=couleur, font=("Courier New", 10))
-    bouton_page_suivante.place(relx=0.85, rely=0.85, anchor='s')
-
     bouton_recentrer = tk.Button(canva, text="recentrer le graphe ", bg = couleur, font=("Courier New", 10))
     bouton_recentrer.place(relx=0.85, rely=0.1, anchor='n')
+
+    def chemin():
+        inter = val1.get()
+        inter2 = val2.get()
+        debut = int(inter)
+        fin = (int(inter2))
+        chemin = chemin_le_plus_court(debut, fin, tab_predecesseurs)
+        canva.delete("chemin") #optionnel
+        for i in range(len(chemin)-1) :
+            canva.create_line(
+                tiers_coords[chemin[i]][0],
+                tiers_coords[chemin[i]][1],
+                tiers_coords[chemin[i+1]][0],
+                tiers_coords[chemin[i+1]][1],
+                fill="black",
+                width=2.5,
+                tags="chemin")#optionnel
+
+    valider = tk.Button(canva, text="Valider", bg = couleur, font=("Courier New", 10), command= chemin)
+    valider.place(relx=0.15, rely=0.3, anchor='n')
+
+    inter1 = val1.get()
+    inter2 = val2.get()
+    # chemin_le_plus_court(firstk, lastk, tab_predecesseurs)
+
     
     #root.bind("<Configure>", place_tier)
     canva.bind("<MouseWheel>", do_zoom)
