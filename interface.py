@@ -155,10 +155,6 @@ def main():
     valider = tk.Button(canva, text="Valider", bg = couleur, font=("Courier New", 10), command= chemin)
     valider.place(relx=0.15, rely=0.3, anchor='n')
 
-    inter1 = val1.get()
-    inter2 = val2.get()
-    # chemin_le_plus_court(firstk, lastk, tab_predecesseurs)
-
     
     #root.bind("<Configure>", place_tier)
     canva.bind("<MouseWheel>", do_zoom)
