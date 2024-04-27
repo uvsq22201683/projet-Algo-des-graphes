@@ -72,7 +72,7 @@ def do_zoom(event):
 
 def nextpage():
     root.destroy()
-    import connexite
+    import routage
 
 def main():
     global canva
