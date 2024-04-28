@@ -138,6 +138,7 @@ if __name__ == '__main__':
 
     ''' CREATION TABLE DE ROUTAGE '''
     _, tab_predecesseurs = algo_de_Floyd_Warshall(matrice_graphe(reseau))
+    #print(tab_predecesseurs)
     debut = 0 #varient
     arrivée = 99
     chemin_le_plus_court(debut, arrivée, tab_predecesseurs)

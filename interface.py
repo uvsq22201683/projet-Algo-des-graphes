@@ -87,7 +87,6 @@ def main():
     hauteur_ecran = root.winfo_screenheight()
     root.geometry(f"{largeur_ecran}x{hauteur_ecran}")
     root.configure(bg="beige")
-    #root.resizable(width = False, height = False)
 
     couleur = "beige" 
 
