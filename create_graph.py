@@ -20,7 +20,7 @@ class Sommet:
 
 class Graphe_list:
     
-    def __init__(self, add_2parents = False):
+    def __init__(self, add_2parents = True):
         self.add_2parents = add_2parents
 
         self.reseaux = self.create_tier1()
@@ -131,7 +131,7 @@ def chemin_le_plus_court(i, j, tab_pred):
     chemin.insert(0, i)
     chemin.append(j)
 
-    #print('Le chemin le plus court de', i, 'à', j, 'est', chemin)
+    print('Le chemin le plus court de', i, 'à', j, 'est', chemin)
     return chemin
 
 def temps_le_plus_court(reseau, chemin):
