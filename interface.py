@@ -220,8 +220,6 @@ def main():
     reseau = Graphe_list().reseaux
     aff_temps = False
     _, tab_predecesseurs = algo_de_Floyd_Warshall(matrice_graphe(reseau))
-    print(tab_predecesseurs)
-
 
     root = tk.Tk()
     root.title('Algo des graphes')
