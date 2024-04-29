@@ -22,3 +22,6 @@ class Data_Tier3:
 data_tier1 = Data_Tier1()
 data_tier2 = Data_Tier2()
 data_tier3 = Data_Tier3()
+
+couleur = "#EDF9EE"
+text_couleur = "#041023"

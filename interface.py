@@ -217,8 +217,6 @@ def main():
     global largeur_ecran
     global hauteur_ecran
 
-    couleur = "#EDF9EE"
-    text_couleur = "#041023"
     reseau = Graphe_list().reseaux
     aff_temps = False
     _, tab_predecesseurs = algo_de_Floyd_Warshall(matrice_graphe(reseau))
