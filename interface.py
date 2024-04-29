@@ -65,6 +65,7 @@ def redo():
     place_tier()
     if aff_temps:
         label_temps()
+    #+ chemin
 
 def recentrer():
     redo()
@@ -109,7 +110,7 @@ def chemin():
         debut = int(points[0].get())
         fin = int(points[1].get())
         chemin = chemin_le_plus_court(debut, fin, tab_predecesseurs)
-        #temps_tot = temps_le_plus_court(reseau, chemin)
+        temps_tot = temps_le_plus_court(reseau, chemin)
         canva.delete("chemin")
         for i in range(len(chemin)-1) :
             canva.create_line(
@@ -121,8 +122,8 @@ def chemin():
                 width=2.5,
                 tags="chemin")
         res.config(text = f'Le chemin le plus court de {debut} à {fin} est\n'+
-                    f'{" -> ".join(map(str, chemin))}\n')
-                    #f'de temps total {temps_tot}')
+                    f'{" -> ".join(map(str, chemin))}\n'+
+                    f'de temps total {temps_tot}')
         
 
 
@@ -217,6 +218,7 @@ def main():
     reseau = Graphe_list().reseaux
     aff_temps = False
     _, tab_predecesseurs = algo_de_Floyd_Warshall(matrice_graphe(reseau))
+    print(tab_predecesseurs)
 
 
     root = tk.Tk()

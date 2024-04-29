@@ -20,7 +20,7 @@ class Sommet:
 
 class Graphe_list:
     
-    def __init__(self, add_2parents = True):
+    def __init__(self, add_2parents = False):
         self.add_2parents = add_2parents
 
         self.reseaux = self.create_tier1()
@@ -97,7 +97,7 @@ class Graphe_list:
 
 def matrice_graphe(reseau_graphe):
     taille = len(reseau_graphe)
-    matrice_graphe = [[float('inf')] * taille for _ in range(taille)] #inf = infini, au lieu de 0 ou -1
+    matrice_graphe = [[float('inf') for _ in range(taille)] for _ in range(taille)] #inf = infini, au lieu de 0 ou -1
 
     for i in range(taille): 
         parents = reseau_graphe[i].parents
@@ -105,19 +105,21 @@ def matrice_graphe(reseau_graphe):
         if parents: 
             for j in range(len(parents)): #on parcourt les parents de chaque sommet
                 matrice_graphe[parents[j]][i] = temps[j] #[ligne][colonne] = [parent][fils]
+                matrice_graphe[i][parents[j]] = temps[j]
     return matrice_graphe
 
 
 def algo_de_Floyd_Warshall(matrice):
     taille = len(matrice)
-    P = [[-1] * taille for _ in range(taille)] #matrice des prédecesseurs
+    P = [[-1 for _ in range(taille)] for _ in range(taille)] #matrice des prédecesseurs
     for k in range (taille): #k représente un sommet intérmediaire
         for i in range (taille):
-            for j in range (taille):
+            for j in range (i, taille):
                 if (matrice[i][k] + matrice[k][j]) < matrice[i][j]:
                     matrice[i][j] = matrice[i][k] + matrice[k][j]
                     if i != j:
                         P[i][j] = k
+                        P[j][i] = k
     return matrice, P  #P[i][j] c'est le predecesseur de j dans le plus court chemin de i à j 
 
 
@@ -151,24 +153,29 @@ def temps_le_plus_court(reseau, chemin):
                 vu.append(i-1)
             except ValueError: pass
     return temps_tot
+
     
 if __name__ == '__main__':
     graph = Graphe_list()
     reseau = graph.reseaux
-    #print(reseau)
+    for i in reseau:
+        print(i.parents)
+
 
     ''' CREATION TABLE DE ROUTAGE '''
-    _, tab_predecesseurs = algo_de_Floyd_Warshall(matrice_graphe(reseau))
-    #print(tab_predecesseurs)
+    matrice = matrice_graphe(reseau)
+    print(matrice)
+    _, tab_predecesseurs = algo_de_Floyd_Warshall(matrice)
+    print(tab_predecesseurs)
     debut = 0 #varient
-    arrivée = 99
+    arrivée = 14
     chemin_le_plus_court(debut, arrivée, tab_predecesseurs)
     
 
-    if graph.is_connexe() == True :
-        print(graph.is_connexe(), 'le graphe est connexe')
-    else : 
-        print(graph.is_connexe(), "le graphe n'est pas connexe")
+    #if graph.is_connexe() == True :
+    #    print(graph.is_connexe(), 'le graphe est connexe')
+    #else : 
+    #    print(graph.is_connexe(), "le graphe n'est pas connexe")
 
     '''
     c = 0
