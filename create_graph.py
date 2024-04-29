@@ -20,7 +20,9 @@ class Sommet:
 
 class Graphe_list:
     
-    def __init__(self):
+    def __init__(self, add_2parents = False):
+        self.add_2parents = add_2parents
+
         self.reseaux = self.create_tier1()
         connexe = self.is_connexe()
         while not connexe:
@@ -60,7 +62,7 @@ class Graphe_list:
 
         for i in range(data_tier3.n):
             for _ in range(data_tier3.liens_t2):
-                self.choose_parent(data_tier1.n, data_tier2.n+data_tier1.n-1, i+tier_len, data_tier2, tier)
+                self.choose_parent(data_tier1.n, data_tier2.n+data_tier1.n-1, i+tier_len, data_tier3, tier)
         return tier
     
     def choose_parent(self, d, f, i, data_tier, tier):
@@ -72,7 +74,8 @@ class Graphe_list:
 
     def update_tier(self, tier, i, parent, temps):
         tier[i].append_edge(temps, parent)
-        tier[parent].append_edge(temps, i) #doublons !!!
+        if self.add_2parents:
+            tier[parent].append_edge(temps, i) #doublons !!!
     
     def is_connexe(self):
         visited = self.dfs(0)
@@ -128,8 +131,26 @@ def chemin_le_plus_court(i, j, tab_pred):
     chemin.insert(0, i)
     chemin.append(j)
 
-    print('Le chemin le plus court de', i, 'à', j, 'est', chemin)
+    #print('Le chemin le plus court de', i, 'à', j, 'est', chemin)
     return chemin
+
+def temps_le_plus_court(reseau, chemin):
+    temps_tot = 0
+    vu = []
+    for i in reversed(range(1, len(chemin))):
+        try:
+            j = reseau[chemin[i]].parents.index(chemin[i-1])
+            temps_tot += reseau[chemin[i]].temps[j]
+            vu.append(i-1)
+        except ValueError: pass
+    for i in range(len(chemin)-1):
+        if i not in vu:
+            try:
+                j = reseau[chemin[i]].parents.index(chemin[i+1])
+                temps_tot += reseau[chemin[i]].temps[j]
+                vu.append(i-1)
+            except ValueError: pass
+    return temps_tot
     
 if __name__ == '__main__':
     graph = Graphe_list()

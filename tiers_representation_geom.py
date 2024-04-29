@@ -15,24 +15,14 @@ def tiers_cercle(rayon, center, nb_points):
     return coords
     
 
-def tiers_representations(root, center = None, factor = 1):
-    root.update_idletasks() 
-    width = root.winfo_width() * factor
-    height = root.winfo_height() * factor
-    #print(width, height)
-
+def tiers_representations(root, width, height, center = None, factor = 1):
     tiers_w = int(width*0.95)
-    tiers_h = int(height*0.75)
+    tiers_h = int(height*0.95)
 
     rayon = int(min(tiers_w, tiers_h)/2)
     
     if center == None:
-        center = [int(width/2), int(tiers_h/2)]
-    #if center_zoom != None:
-    #if center[0] > center_zoom[0]:
-    #    center[0] += centercenter_zoom[0]
-        
-    #center[0] 
+        center = [int(tiers_w/2), int(tiers_h/2)+15]
         
 
     cercles = [] #tier1, tier2, tier3

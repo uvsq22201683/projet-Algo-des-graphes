@@ -4,14 +4,14 @@ class Data_Tier1:
     n = 10
     pourcentage = 0.75
     temps = (5, 10)
-    color = "red"
+    color = "#E57936"
 
 class Data_Tier2:
     n = 20
     liens_t1 = (1, 2)
     liens_t2 = (2, 3)
     temps = (10, 20)
-    color = "green"
+    color = "#3891C1"
 
 class Data_Tier3:
     n = 70
