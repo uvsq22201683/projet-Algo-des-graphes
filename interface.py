@@ -60,15 +60,17 @@ def do_zoom(event):
 
 
 def redo():
+    global tiers_coords
+    tiers_coords = tiers_representations(root, largeur_ecran*0.55, hauteur_ecran*0.7)
     canva.delete("all")
     add_liens(canva)
     place_tier()
     if aff_temps:
         label_temps()
-    #+ chemin
 
 def recentrer():
     redo()
+    chemin()
 
 def refaire_graphe():
     global tab_predecesseurs
@@ -193,7 +195,7 @@ def redo_buttons(frame, couleur):
                                  bg = couleur, 
                                  font=("Courier New", 12),
                                  fg = text_couleur, command= textes[i][1])
-        bouton.grid(row = 0, column = i, padx = 10)
+        bouton.grid(row = 0, column = i, padx = 5)
         redo_b.append(bouton)
 
 
@@ -212,7 +214,9 @@ def main():
     global aff_temps
     global tab_predecesseurs
     global res
-    
+    global largeur_ecran
+    global hauteur_ecran
+
     couleur = "#EDF9EE"
     text_couleur = "#041023"
     reseau = Graphe_list().reseaux

@@ -158,15 +158,11 @@ def temps_le_plus_court(reseau, chemin):
 if __name__ == '__main__':
     graph = Graphe_list()
     reseau = graph.reseaux
-    for i in reseau:
-        print(i.parents)
 
 
     ''' CREATION TABLE DE ROUTAGE '''
     matrice = matrice_graphe(reseau)
-    print(matrice)
     _, tab_predecesseurs = algo_de_Floyd_Warshall(matrice)
-    print(tab_predecesseurs)
     debut = 0 #varient
     arrivée = 14
     chemin_le_plus_court(debut, arrivée, tab_predecesseurs)
