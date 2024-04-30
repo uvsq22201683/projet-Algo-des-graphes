@@ -5,8 +5,7 @@ Pour cela, il est décomposé en 4 tâches :
 
 - Création aléatoire d'un réseau réaliste :
 Un premier groupe de 10 noeuds appelé backbone a été crée, ces 10 noeuds étant très connectés entre eux. Ce groupe représente le coeur du réseau. Les temps de communication entre tous ces noeuds ont été déterminés entre 5 et 10. Un deuxième groupe de 20 noeuds a été crée. Chacun de ces 20 noeud est connecté à deux ou trois noeuds du backbone et chacun des liens à une valeur comprise entre 10 et 20. Un troisième groupe de 70 noeuds a été crée et ils sont chacun liés à deux noeuds du deuxième groupe.
-    
-   Pour créer le graphe, ces classes ont été utlisées.
+Pour créer le graphe, ces classes ont été utlisées.
 
 - Vérification de la connexité du réseau : 
     Pour vérifier qu'il existe bien un chemin entre n'importe quelle paire de sommets, une méthode de parcours en profondeur a été utilisée. L'initialisation fonctionne en créant un tableau "visisted", où chaque noeud marqué comme non-visité retourne False. Un sommet(0) a été arbitrairement choisi et ajouté dans une pile "stack". Tant que la pile n'est pas vide, le sommet en haut de la pile est examiné :
