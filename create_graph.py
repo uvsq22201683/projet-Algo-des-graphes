@@ -4,7 +4,7 @@ from math import inf
 
 
 global add_2parents 
-add_2parents= False #ne pas garder des donnes redondantes
+add_2parents= False # ne pas garder des donnees redondantes
 
 """Create graph"""
 
@@ -108,7 +108,7 @@ class Graphe_list:
                         stack.append(neighbor)
         return visited
     
-    #Supprimer les donnes doublees
+    ### Supprimer les donnes doublees
     
     def delete_doublon(self):
         """Supprimer les donnes redondantes du graphe"""
@@ -121,7 +121,7 @@ class Graphe_list:
                     self.reseaux[p].temps.remove(idx)
                 except ValueError: pass
     
-    # Table de routage
+    ### Table de routage
 
     def dijkstra_2D(self):
         """Creation d'une table de routage grace a l'algorithme du dijkstra"""
