@@ -121,7 +121,6 @@ def chemin():
     debut = int(points[0].get())
     fin = int(points[1].get())
     chemin = reseau.chemin_le_plus_court(debut, fin)
-    #temps_tot = temps_le_plus_court(reseau, chemin)
     canva.delete("chemin")
     for i in range(len(chemin)-1) :
         canva.create_line(
@@ -134,8 +133,7 @@ def chemin():
             tags="chemin")
     res.config(text = f'Le chemin le plus court de {debut} à {fin} est\n'+
                 f'{" -> ".join(map(str, chemin))}\n'+
-                #f'de temps total {temps_tot}'+ 
-                str(reseau.matrice_temps[debut][fin]))
+                f'de temps total {reseau.matrice_temps[debut][fin]}')
         
 
 
