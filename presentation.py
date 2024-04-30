@@ -1,7 +1,9 @@
 import tkinter as tk
 from PIL import Image, ImageTk
+from data import couleur, text_couleur
 
-couleur = "beige"
+"""Page d'acceil"""
+
 
 racine = tk.Tk()
 racine.title("Interface")
@@ -14,11 +16,16 @@ def btncestparti():
     racine.destroy()
     import interface
 
-label_message = tk.Label(racine, text="Projet IN403",font=("Courier New", 50),  justify='center', background=couleur)
-label_message2 = tk.Label(racine, text="Algorithmique des Graphes",font=("Courier New", 50),  justify='center', background=couleur)
-label_message3 = tk.Label(racine, text="Par les reines du monde Daria, Vanessa, Maïlys et Maryatou",font=("Courier New", 15), background=couleur)
-label_message5 = tk.Label(racine, text="Pour notre cher professeur Thierry Mots-Tort ",font=("Courier New", 15), background=couleur)
-label_message4 = tk.Label(racine, text="2023/2024",font=("Courier New", 15), background=couleur, )
+label_message = tk.Label(racine, text="Projet IN403",font=("Courier New", 50),  
+                         justify='center', background=couleur, fg = text_couleur)
+label_message2 = tk.Label(racine, text="Algorithmique des Graphes",font=("Courier New", 50),  
+                          justify='center', background=couleur, fg = text_couleur)
+label_message3 = tk.Label(racine, text="Par les reines du monde Daria, Vanessa, Maïlys et Maryatou",
+                          font=("Courier New", 15), background=couleur, fg = text_couleur)
+label_message5 = tk.Label(racine, text="Pour notre cher professeur Thierry Mots-Tort ",
+                          font=("Courier New", 15), background=couleur, fg = text_couleur)
+label_message4 = tk.Label(racine, text="2023/2024",font=("Courier New", 15), 
+                          background=couleur, fg = text_couleur)
 bouton = tk.Button(racine, text="Que l'aventure commence!")
 label_message.pack()
 label_message2.pack()

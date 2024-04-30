@@ -1,15 +1,12 @@
 import tkinter as tk
 from tiers_representation_geom import tiers_representations
 from data import *
-from create_graph import Graphe_list 
-from create_graph import algo_de_Floyd_Warshall
-from create_graph import chemin_le_plus_court, temps_le_plus_court
-from create_graph import matrice_graphe
-
+from create_graph import Graphe_list
 
 """Graph canvas"""
 
 def tier(color, nb, coords):
+    """Place un noeuds sur le canvas"""
     circle_size = 9
     x0 = coords[0]-circle_size
     y0 = coords[1]-circle_size
@@ -19,16 +16,8 @@ def tier(color, nb, coords):
     t_label = canva.create_text(coords[0], coords[1], text= nb)
     tiers.append([t, t_label])
 
-def resize_tiers(factor):
-    for i in range(len(tiers)):
-        tiers[i][1] *= factor
-        tiers[i][2] *= factor
-        tiers[i][3] *= factor
-        tiers[i][4] *= factor
-        canva.coords(tiers[i][0], tiers[i][1], tiers[i][2],
-                     tiers[i][3], tiers[i][4])
-
 def place_tier():
+    """Place les noeuds sur le canvas"""
     global tiers
     tiers = []
     color =  data_tier1.color
@@ -40,24 +29,31 @@ def place_tier():
             color = data_tier3.color
 
 def add_liens(canva):
+    """Place les aretes sur le canvas"""
     color =  data_tier1.color
-    for i in reversed(range(len(reseau))):
-        for j in range(len(reseau[i].parents)):
-            if reseau[i].parents[j] < data_tier1.n:
+    width = 2
+    for i in reversed(range(len(reseau.reseaux))):
+        for j in range(len(reseau.reseaux[i].parents)):
+            if reseau.reseaux[i].parents[j] < data_tier1.n:
                 color =  data_tier1.color
+                width = 2
             else: 
                 color =  data_tier2.color
+                width = 1
 
             canva.create_line(tiers_coords[i][0], tiers_coords[i][1], 
-                              tiers_coords[reseau[i].parents[j]][0], tiers_coords[reseau[i].parents[j]][1],
-                              fill = color, width = (data_tier3.temps[1]-reseau[i].temps[j])*0.04)
+                              tiers_coords[reseau.reseaux[i].parents[j]][0], tiers_coords[reseau.reseaux[i].parents[j]][1],
+                              fill = color, width = width)
 
 def do_zoom(event):
+    """Zoom du canvas"""
     x = canva.canvasx(event.x)
     y = canva.canvasy(event.y)
     factor = 1.001 ** event.delta
     canva.scale(tk.ALL, x, y, factor, factor)
 
+
+"""Graph canvas actions"""
 
 def redo():
     global tiers_coords
@@ -69,17 +65,41 @@ def redo():
         label_temps()
 
 def recentrer():
+    """Recentrer le graphe existant au sein d'un canvas"""
     redo()
     chemin()
 
 def refaire_graphe():
-    global tab_predecesseurs
+    """Tracer un nouveau graphe"""
+
     global reseau
-    reseau = Graphe_list().reseaux
-    _, tab_predecesseurs = algo_de_Floyd_Warshall(matrice_graphe(reseau))
+    reseau = Graphe_list()
     redo()
 
+
+def label_temps():
+    """Afficher les valeurs des aretes"""
+    update_coords()
+    temps = []
+    center = [int(largeur_ecran/2), int(hauteur_ecran/2)+15]
+    for i in range(len(reseau.reseaux)):
+            for j in range(len(reseau.reseaux[i].parents)):
+                if i < j:
+                    x = (tiers_coords[reseau.reseaux[i].parents[j]][0] + tiers_coords[i][0]*5)/6
+                    y = (tiers_coords[reseau.reseaux[i].parents[j]][1]+ tiers_coords[i][1]*5)/6
+                else:
+                    x = (tiers_coords[i][0]+tiers_coords[reseau.reseaux[i].parents[j]][0]*5)/6
+                    y = (tiers_coords[i][1]+tiers_coords[reseau.reseaux[i].parents[j]][1]*5)/6
+                while (x, y) in temps:
+                    x *= 1.1
+                    y *= 1.1
+                temps.append((x, y))
+                canva.create_text(x, y, text= reseau.reseaux[i].temps[j], 
+                                  font=('Arial', 7), tags='temps')
+
 def afficher_temps():
+    """Afficher ou cacher les valeurs des aretes 
+    quand le boutton est appuiye"""
     global aff_temps
     if aff_temps:
         canva.delete('temps')
@@ -88,48 +108,38 @@ def afficher_temps():
         label_temps()
         aff_temps = True
 
-def label_temps():
-    update_coords()
-    temps = []
-    for i in range(len(reseau)):
-            for j in range(len(reseau[i].parents)):
-                x = (tiers_coords[i][0]+tiers_coords[reseau[i].parents[j]][0]*5)/6
-                y = (tiers_coords[i][1]+tiers_coords[reseau[i].parents[j]][1]*5)/6
-                while (x, y) in temps:
-                    x *= 1.1
-                    y *= 1.1
-                temps.append((x, y))
-                canva.create_text(x, y, text= reseau[i].temps[j], tags='temps')
 
 def update_coords():
+    """Calcule les coordonnes des noeuds apres le zoom"""
     for i in range(len(tiers)):
         x, y = canva.coords(tiers[i][1])
         tiers_coords[i] = (x, y)  
 
-
 def chemin():
-        update_coords()
-        debut = int(points[0].get())
-        fin = int(points[1].get())
-        chemin = chemin_le_plus_court(debut, fin, tab_predecesseurs)
-        temps_tot = temps_le_plus_court(reseau, chemin)
-        canva.delete("chemin")
-        for i in range(len(chemin)-1) :
-            canva.create_line(
-                tiers_coords[chemin[i]][0],
-                tiers_coords[chemin[i]][1],
-                tiers_coords[chemin[i+1]][0],
-                tiers_coords[chemin[i+1]][1],
-                fill="black",
-                width=2.5,
-                tags="chemin")
-        res.config(text = f'Le chemin le plus court de {debut} à {fin} est\n'+
-                    f'{" -> ".join(map(str, chemin))}\n'+
-                    f'de temps total {temps_tot}')
+    """Trace le plus court chemin sur le graphe"""
+    update_coords()
+    debut = int(points[0].get())
+    fin = int(points[1].get())
+    chemin = reseau.chemin_le_plus_court(debut, fin)
+    #temps_tot = temps_le_plus_court(reseau, chemin)
+    canva.delete("chemin")
+    for i in range(len(chemin)-1) :
+        canva.create_line(
+            tiers_coords[chemin[i]][0],
+            tiers_coords[chemin[i]][1],
+            tiers_coords[chemin[i+1]][0],
+            tiers_coords[chemin[i+1]][1],
+            fill="black",
+            width=2.5,
+            tags="chemin")
+    res.config(text = f'Le chemin le plus court de {debut} à {fin} est\n'+
+                f'{" -> ".join(map(str, chemin))}\n'+
+                #f'de temps total {temps_tot}'+ 
+                str(reseau.matrice_temps[debut][fin]))
         
 
 
-"""Bouttons"""
+"""Widgets"""
 
 def titre(couleur):
     textes = [["Voici notre grand secret :", 20],
@@ -180,6 +190,7 @@ def choisir_noeuds_v(frame):
 
 
 def choisir_noeuds(frame):
+    """frame d'envoye de requettes"""
     choisir_noeuds_t(frame)
     choisir_noeuds_v(frame)
 
@@ -212,14 +223,12 @@ def main():
     global text_couleur
     global reseau
     global aff_temps
-    global tab_predecesseurs
     global res
     global largeur_ecran
     global hauteur_ecran
 
-    reseau = Graphe_list().reseaux
+    reseau = Graphe_list()
     aff_temps = False
-    _, tab_predecesseurs = algo_de_Floyd_Warshall(matrice_graphe(reseau))
 
     root = tk.Tk()
     root.title('Algo des graphes')
@@ -227,9 +236,9 @@ def main():
     hauteur_ecran = root.winfo_screenheight()
     root.geometry(f"{largeur_ecran}x{hauteur_ecran}")
     root.configure(bg = couleur)
+    root.resizable(False,False)
 
-    
-    #root.update_idletasks() 
+
     canva = tk.Canvas(root, width = largeur_ecran*0.55, 
                       height = hauteur_ecran*0.7, bg = couleur)
     canva.place(relx = 0.01, rely = 0.2)
@@ -252,7 +261,6 @@ def main():
     frame2.place(relx = 0.6, rely = 0.85)
     redo_buttons(frame2, couleur)
 
-    #root.bind("<Configure>", place_tier)
     canva.bind("<MouseWheel>", do_zoom)
     canva.bind('<ButtonPress-1>', lambda event: canva.scan_mark(event.x, event.y))
     canva.bind("<B1-Motion>", lambda event: canva.scan_dragto(event.x, event.y, gain=1))

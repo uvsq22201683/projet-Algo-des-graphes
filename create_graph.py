@@ -1,16 +1,17 @@
 import random as rd
-from math import ceil
 from data import *
-import numpy as np
+from math import inf
 
-np.random.seed(3)
+
+global add_2parents 
+add_2parents= False
 
 """Create graph"""
 
 class Sommet:
     def __init__(self, temps, parents):
         self.temps = temps
-        self.parents = parents #faire enfant? non - car la table de routage est figee
+        self.parents = parents 
     
     def append_edge(self, temps, parent):
         self.temps.append(temps)
@@ -20,64 +21,78 @@ class Sommet:
 
 class Graphe_list:
     
-    def __init__(self, add_2parents = False):
-        self.add_2parents = add_2parents
+    def __init__(self, add_2parents = add_2parents):
+        """Creer le graphe"""
+        self.create_tier1()
 
-        self.reseaux = self.create_tier1()
         connexe = self.is_connexe()
         while not connexe:
-            self.reseaux = self.create_tier1()
+            self.create_tier1()
             connexe = self.is_connexe()
-        self.reseaux = self.create_tier2(self.reseaux)
-        self.reseaux = self.create_tier3(self.reseaux)
+            print(self.reseaux, connexe)
+
+        self.create_tier2()
+        self.create_tier3()
+
+        self.matrice_temps, self.tab_pred = self.dijkstra_2D() #
+
+        if not add_2parents:
+            self.delete_doublon()
     
     
     def create_tier1(self):
+        """Creer noeuds du tier 1"""
+        self.reseaux = [Sommet([], []) for i in range(data_tier1.n)]
 
-        tier = [Sommet([], []) for i in range(data_tier1.n)]
         for i in range(data_tier1.n):
             for j in range(i+1, data_tier1.n):
                 if rd.random() <= data_tier1.pourcentage:
                     temps = rd.randint(data_tier1.temps[0], data_tier1.temps[1])
-                    self.update_tier(tier, i, j, temps)
-        return tier
+                    self.update_tier(i, j, temps)
 
-    def create_tier2(self, tier):
-        tier_len = len(tier)
+    def create_tier2(self):
+        """Creer noeuds du tier 2"""
+        tier_len = len(self.reseaux)
         new_tier = [Sommet([], []) for i in range(data_tier2.n)]
-        tier += new_tier
+        self.reseaux += new_tier
 
         for i in range(data_tier2.n):
             for _ in range(rd.randint(data_tier2.liens_t1[0], data_tier2.liens_t1[1])):
-                self.choose_parent(0, data_tier1.n-1, i+tier_len, data_tier2, tier)
+                self.choose_parent(0, data_tier1.n-1, i+tier_len, data_tier2)
 
             for _ in range(rd.randint(data_tier2.liens_t2[0], data_tier2.liens_t2[1])):
-                self.choose_parent(data_tier1.n, data_tier2.n+data_tier1.n-1, i+tier_len, data_tier2, tier)
-        return tier
+                self.choose_parent(data_tier1.n, data_tier2.n+data_tier1.n-1, 
+                                   i+tier_len, data_tier2)
 
-    def create_tier3(self, tier): #ne marche pas
-        tier_len = len(tier)
+
+    def create_tier3(self):
+        """Creer noeuds du tier 3"""
+        tier_len = len(self.reseaux)
         new_tier = [Sommet([], []) for i in range(data_tier3.n)]
-        tier += new_tier
+        self.reseaux += new_tier
 
         for i in range(data_tier3.n):
             for _ in range(data_tier3.liens_t2):
-                self.choose_parent(data_tier1.n, data_tier2.n+data_tier1.n-1, i+tier_len, data_tier3, tier)
-        return tier
+                self.choose_parent(data_tier1.n, data_tier2.n+data_tier1.n-1, 
+                                   i+tier_len, data_tier3)
     
-    def choose_parent(self, d, f, i, data_tier, tier):
-        parent = (rd.randint(d, f)) 
-        temps = (rd.randint(data_tier.temps[0], data_tier.temps[1]))
-        while (parent in tier[i].parents) or (parent == i):
-            parent = (rd.randint(d, f))
-        self.update_tier(tier, i, parent, temps)
+    def choose_parent(self, d, f, i, data_tier):
+        """Attribuer les temps et les parents aux noeuds"""
+        parent = rd.randint(d, f)
+        temps = rd.randint(data_tier.temps[0], data_tier.temps[1])
+        while (parent in self.reseaux[i].parents) or (parent == i):
+            parent = rd.randint(d, f)
+        self.update_tier(i, parent, temps)
 
-    def update_tier(self, tier, i, parent, temps):
-        tier[i].append_edge(temps, parent)
-        if self.add_2parents:
-            tier[parent].append_edge(temps, i) #doublons !!!
+    def update_tier(self, i, parent, temps):
+        """Sauvegarder les temps et les parents attribues aux noeuds"""
+        self.reseaux[i].append_edge(temps, parent)
+        self.reseaux[parent].append_edge(temps, i)
+    
+    ###Connexite
     
     def is_connexe(self):
+        """Verifie la connexite du graphe"""
         visited = self.dfs(0)
         return all(visited)
 
@@ -92,92 +107,62 @@ class Graphe_list:
                     if not visited[neighbor]:
                         stack.append(neighbor)
         return visited
-
-
-
-def matrice_graphe(reseau_graphe):
-    taille = len(reseau_graphe)
-    matrice_graphe = [[float('inf') for _ in range(taille)] for _ in range(taille)] #inf = infini, au lieu de 0 ou -1
-
-    for i in range(taille): 
-        parents = reseau_graphe[i].parents
-        temps = reseau_graphe[i].temps
-        if parents: 
-            for j in range(len(parents)): #on parcourt les parents de chaque sommet
-                matrice_graphe[parents[j]][i] = temps[j] #[ligne][colonne] = [parent][fils]
-                matrice_graphe[i][parents[j]] = temps[j]
-    return matrice_graphe
-
-
-def algo_de_Floyd_Warshall(matrice):
-    taille = len(matrice)
-    P = [[-1 for _ in range(taille)] for _ in range(taille)] #matrice des prédecesseurs
-    for k in range (taille): #k représente un sommet intérmediaire
-        for i in range (taille):
-            for j in range (i, taille):
-                if (matrice[i][k] + matrice[k][j]) < matrice[i][j]:
-                    matrice[i][j] = matrice[i][k] + matrice[k][j]
-                    if i != j:
-                        P[i][j] = k
-                        P[j][i] = k
-    return matrice, P  #P[i][j] c'est le predecesseur de j dans le plus court chemin de i à j 
-
-
-def chemin_le_plus_court(i, j, tab_pred): 
-    chemin = [] 
-    predecesseur = tab_pred[i][j]
-    while predecesseur != -1 and predecesseur != i: #-1 veut dire qu'il n'y a pas de pred dans le chemin le plus court établi
-        chemin.append(predecesseur)
-        predecesseur = tab_pred[i][predecesseur]
-    chemin.reverse()
-    chemin.insert(0, i)
-    chemin.append(j)
-
-    print('Le chemin le plus court de', i, 'à', j, 'est', chemin)
-    return chemin
-
-def temps_le_plus_court(reseau, chemin):
-    temps_tot = 0
-    vu = []
-    for i in reversed(range(1, len(chemin))):
-        try:
-            j = reseau[chemin[i]].parents.index(chemin[i-1])
-            temps_tot += reseau[chemin[i]].temps[j]
-            vu.append(i-1)
-        except ValueError: pass
-    for i in range(len(chemin)-1):
-        if i not in vu:
-            try:
-                j = reseau[chemin[i]].parents.index(chemin[i+1])
-                temps_tot += reseau[chemin[i]].temps[j]
-                vu.append(i-1)
-            except ValueError: pass
-    return temps_tot
-
     
-if __name__ == '__main__':
-    graph = Graphe_list()
-    reseau = graph.reseaux
+    #Supprimer les donnes doublees
+    
+    def delete_doublon(self):
+        """Supprimer les donnes redondantes du graphe"""
+        for i in range(len(self.reseaux)):
+            for j in range(len(self.reseaux[i].parents)):
+                p = self.reseaux[i].parents[j]
+                try:
+                    idx = self.reseaux[p].parents.index(i)
+                    self.reseaux[p].parents.remove(idx)
+                    self.reseaux[p].temps.remove(idx)
+                except ValueError: pass
+    
+    # Table de routage
 
-
-    ''' CREATION TABLE DE ROUTAGE '''
-    matrice = matrice_graphe(reseau)
-    _, tab_predecesseurs = algo_de_Floyd_Warshall(matrice)
-    debut = 0 #varient
-    arrivée = 14
-    chemin_le_plus_court(debut, arrivée, tab_predecesseurs)
+    def dijkstra_2D(self):
+        """Creation d'une table de routage grace a l'algorithme du dijkstra"""
+        n = len(self.reseaux)
+        matrice = [[0 for _ in range(n)]for __ in range(n)]
+        parent = [[0 for _ in range(n)]for __ in range(n)]
+        for debut in range(n):
+            parent[debut], matrice[debut] = self.dijkstra(debut)
+        return matrice, parent
+    
+    def dijkstra(self, debut):
+        """Application de l'algorithme du dijkstra a un noeud donne"""
+        n = len(self.reseaux)
+        matrice = [inf for _ in range(n)]
+        matrice[debut] = 0
+        parent = [0 for _ in range(n)]
+        vu = []
+        d_pre = debut
+        while len(vu) != n:
+            d_min = (0, inf)
+            voisins = self.reseaux[d_pre].parents
+            temps = self.reseaux[d_pre].temps
+            for i in range(len(voisins)):
+                if voisins[i] not in vu:
+                    if temps[i] + matrice[d_pre] < matrice[voisins[i]]:
+                            matrice[voisins[i]] = temps[i] + matrice[d_pre]
+                            parent[voisins[i]] = d_pre
+                    if matrice[voisins[i]] < d_min[1]:
+                        d_min = (voisins[i], matrice[voisins[i]])
+            vu.append(d_pre)
+            d_pre = d_min[0]
+        return parent, matrice
+    
+    def chemin_le_plus_court(self, i, j):
+        """Trouver le chemin le plus court entre 2 noeuds 
+        a base d'une table de routage"""
+        path = [j]
+        while path[-1] != i:
+            path.append(self.tab_pred[i][path[-1]])
+        path.reverse()
+        return path
     
 
-    #if graph.is_connexe() == True :
-    #    print(graph.is_connexe(), 'le graphe est connexe')
-    #else : 
-    #    print(graph.is_connexe(), "le graphe n'est pas connexe")
 
-    '''
-    c = 0
-    for i in reseau:
-        print(c, i.parents)
-        print(c, i.temps)
-        c += 1
-       ''' 
-    

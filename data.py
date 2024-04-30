@@ -19,6 +19,9 @@ class Data_Tier3:
     temps = (20, 50)
     color = 'blue'
 
+
+""" VAL """
+
 data_tier1 = Data_Tier1()
 data_tier2 = Data_Tier2()
 data_tier3 = Data_Tier3()
