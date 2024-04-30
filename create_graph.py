@@ -4,7 +4,7 @@ from math import inf
 
 
 global add_2parents 
-add_2parents= False
+add_2parents= False #ne pas garder des donnes redondantes
 
 """Create graph"""
 
