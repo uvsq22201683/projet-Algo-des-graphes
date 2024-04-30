@@ -168,6 +168,8 @@ def choisir_noeuds_t(frame):
             
 def choisir_noeuds_v(frame):
     global points
+    global val
+    val = []
     f = tk.Frame(frame, background= couleur, borderwidth = 0)
     f.grid(row = 1, pady= 10)
     textes = ["Noeud de départ :",
@@ -179,9 +181,11 @@ def choisir_noeuds_v(frame):
                      justify='center', background = couleur,
                      fg = text_couleur)
         l.grid(row = i, column = 0, sticky = 'w')
-        val = tk.Entry(f)
-        val.grid(row = i, column = 1)
-        points.append(val)
+        val.append(tk.Variable(f))
+        val[-1].set('')
+        val1 = tk.Entry(f, textvariable=val[-1])
+        val1.grid(row = i, column = 1)
+        points.append(val1)
     
     valider = tk.Button(f, text="Valider", bg = couleur, 
                         font=("Courier New", 15), fg = text_couleur,
@@ -209,7 +213,22 @@ def redo_buttons(frame, couleur):
         bouton.grid(row = 0, column = i, padx = 5)
         redo_b.append(bouton)
 
-
+def choose_S(event):
+    global actual_S_state
+    x = event.x
+    y = event.y
+    for i in range(len(tiers)):
+        t_coords = canva.coords(tiers[i][0])
+        if (t_coords[0]< x <t_coords[2] or t_coords[0]> x >t_coords[2]) and \
+        (t_coords[1]< y <t_coords[3] or t_coords[1]> y >t_coords[3]):
+            break
+    if actual_S_state == 0:
+        val[0].set(str(i))
+        actual_S_state = 1
+    else:
+        val[1].set(str(i))
+        actual_S_state = 0
+    
 
 """Main"""
 
@@ -226,9 +245,12 @@ def main():
     global res
     global largeur_ecran
     global hauteur_ecran
+    global actual_S_state
+    global val
 
     reseau = Graphe_list()
     aff_temps = False
+    actual_S_state = 0
 
     root = tk.Tk()
     root.title('Algo des graphes')
@@ -252,7 +274,7 @@ def main():
     frame1 = tk.Frame(root, background= couleur, borderwidth = 0)
     frame1.place(relx = 0.6, rely = 0.30)
     choisir_noeuds(frame1)
-    res = tk.Label(frame1, text= "", font=("Courier New", 15),  
+    res = tk.Label(frame1, textvariable = "", font=("Courier New", 15),  
                      justify='center', background = couleur,
                      fg = text_couleur)
     res.grid(row = 2)
@@ -261,6 +283,7 @@ def main():
     frame2.place(relx = 0.6, rely = 0.85)
     redo_buttons(frame2, couleur)
 
+    canva.bind('<ButtonPress-3>', choose_S)
     canva.bind("<MouseWheel>", do_zoom)
     canva.bind('<ButtonPress-1>', lambda event: canva.scan_mark(event.x, event.y))
     canva.bind("<B1-Motion>", lambda event: canva.scan_dragto(event.x, event.y, gain=1))
